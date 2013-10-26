@@ -1,0 +1,22 @@
+irc:
+  server: irc.example.com
+  user: scoutix
+  nick: scoutix
+  realname: I'm a bot
+  channels: [ "#example" ]
+  port: 6667
+  ssl: false
+  verify_ssl: false
+
+plugins:
+  ChannelMembers:
+    :enabled: true
+    :database: var/channel_members.db
+  Oper:
+    :enabled: true
+    :username: username
+    :password: password
+  Identify:
+    :enabled: true
+    :password: password
+    :type: :nickserv
