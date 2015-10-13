@@ -54,17 +54,19 @@ module Cinch
       end
 
       def create_record(msg,user=nil)
-# TODO hardcoded channel name #greek as quit doesn't provide channel
-        channel_name = "#greek"
-        @db.execute( "INSERT into ChannelMembers (channel,count,time) VALUES ('#{channel_name}' , #{@bot.channels.select{|channel| channel.name == channel_name}[0].users.count}, '#{Time.now.to_s}');")
+	if msg.channel.nil?
+          @bot.channels.each {|channel|
+            @db.execute( "INSERT into ChannelMembers (channel,count,time) VALUES ('#{channel.name}' , #{channel.users.count}, '#{Time.now.to_s}');")
+          }
+        else
+          @db.execute( "INSERT into ChannelMembers (channel,count,time) VALUES ('#{msg.channel.name}' , #{msg.channel.users.count}, '#{Time.now.to_s}');")
+        end
       end
 
       match /current_peak/, method: :announce_peak
       def announce_peak(msg)
-# TODO hardcoded channel name #greek as quit doesn't provide channel
-        channel_name = "#greek"
-        if msg.channel.nil? or msg.channel.name == channel_name
-          result = @db.execute("SELECT count,time FROM ChannelMembers WHERE channel = ? ORDER BY count DESC LIMIT 1", channel_name)[0]
+        if !msg.channel.nil?
+          result = @db.execute("SELECT count,time FROM ChannelMembers WHERE channel = ? ORDER BY count DESC LIMIT 1", msg.channel.name)[0]
           msg.reply "Current channel peak is #{result[0]} members on #{result[1]}"
         end
       end
