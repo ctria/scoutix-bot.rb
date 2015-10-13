@@ -16,8 +16,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-$LOAD_PATH << File.dirname(File.expand_path(__FILE__)).to_s
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', __FILE__)
+APP_PATH = File.dirname(File.expand_path(__FILE__)).to_s
+$LOAD_PATH << APP_PATH
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', APP_PATH)
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
 require 'sqlite3'
@@ -49,6 +50,8 @@ bot = Cinch::Bot.new do
     c.port       = $config['irc']['port'] || '6667'
     c.ssl.use    = $config['irc']['ssl'] || false
     c.ssl.verify = $config['irc']['verify_ssl'].nil? ? true : $config['irc']['verify_ssl']
+    c.sasl.username = $config['irc']['sasl_username']
+    c.sasl.password = $config['irc']['sasl_password']
     c.plugins.plugins = $plugins
     c.plugins.options = $plugin_options
   end
